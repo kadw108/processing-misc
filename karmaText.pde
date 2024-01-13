@@ -61,7 +61,6 @@ KarmaChar[][] genLevelArray(PGraphics main, int level) {
   return ka;
 }
 
-/*
 KarmaChar[][] genKarmaArray(PGraphics main, float noiseSeed) {
   noiseDetail(0, 0.5);
   int cols = ceil(main.width / textWidth);
@@ -83,7 +82,6 @@ KarmaChar[][] genKarmaArray(PGraphics main, float noiseSeed) {
   
   return ka;
 }
-*/
 
 PGraphics createTextScreen(KarmaChar[][] ka, int w, int h) {
   PGraphics returned = createGraphics(w, h);

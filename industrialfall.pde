@@ -84,7 +84,7 @@ void mandala(float x, float y) {
       // rotate(frameCount/(float)24);
       rotate(radians((float)frameCount));
       
-      outerKarmaRing(gold);
+      outerKarmaRing(gold, frameCount);
     popMatrix();
     
     // dots_star(float x, float y, float radius1, float radius2, int dot_size, int npoints)
