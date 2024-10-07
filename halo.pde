@@ -637,6 +637,29 @@ void ellipseImage(PImage img, float x, float y, float innerRad, float diff, floa
   ellipseImage(g, img, x, y, innerRad, diff, rectW, npoints, shiftDeg, false);
 }
 
+// Like ellipseImage, but selects multiple images from the array to use at once
+// ellipseImage(karma, origin.x, origin.y, 300, 20, 20, 10, frameCount);
+void ellipseImageMultiple(PGraphics pg, PImage[] images, float x, float y, float innerRad, float diff, float rectW, int npoints, float shiftDeg, boolean flipImageVertically, float seed) {
+  float angle = TWO_PI / npoints;
+  float shift = radians(shiftDeg);
+
+  if (flipImageVertically)  {
+    innerRad *= -1;
+  }
+
+  for (float a = 0; a < TWO_PI; a += angle) {
+    pg.pushMatrix();
+    pg.translate(x, y);
+    pg.rotate(a + shift);
+
+    int whichImage = floor(noise(seed, a) * images.length * 100);
+    PImage img = getFrame(images, 0, whichImage);
+
+    pg.image(img, 0, innerRad, rectW, diff);
+    pg.popMatrix();
+  }
+}
+
 void simpleMandalaRays(PGraphics pg, float x, float y, float radius1, float radius2, int numlines, float deg) {
   pg.pushMatrix();
   pg.translate(x, y);
@@ -740,4 +763,32 @@ void drawMandala3(float x, float y, float radius, float radius2, color c) {
   }
   
   popMatrix();
+}
+
+/*
+Draw pie chart.
+From https://processing.org/examples/piechart.html
+
+pg - PGraphics to draw chart on, g for default
+origin - origin of pie chart
+diameter - diameter of pie chart
+angles - array of angles where chart should be divided
+startColor - one end of color range of pie chart slices
+endColor - other end of color range of pie chart slices
+
+Example: 
+
+float[] angles = { 30, 10, 45, 35, 60, 38, 75, 67 };
+pieChart(300, angles);
+*/
+void pieChart(PGraphics pg, PVector origin, float diameter, float[] angles, color startColor, color endColor) {
+  float lastAngle = 0;
+  for (int i = 0; i < angles.length; i++) {
+    float colorDegree = float(i) / (angles.length - 1);
+    color sliceColor = lerpColor(startColor, endColor, colorDegree);
+    pg.fill(sliceColor);
+
+    pg.arc(origin.x, origin.y, diameter, diameter, lastAngle, lastAngle + radians(angles[i]));
+    lastAngle += radians(angles[i]);
+  }
 }

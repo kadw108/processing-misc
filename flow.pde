@@ -1,6 +1,19 @@
 // flow
 
 /*
+Generates a vector field - a grid of vectors meant to be applied to
+a ParticleSystemF (vector field system for particles).
+
+w - number of columns in grid
+h - number of rows in grid
+factor - how much the vector changes in each successive grid spot
+(smoothness of field, for lack of better word)
+seed - random seed of field; if it doesn't change, field never changes.
+otherwise, the field can vary depending on the seed's value.
+set as frameCount or something similar to get a field that changes.
+
+Example of use:
+
   PVector[][] flowField = flowField(100, 100, 0.1, frameCount/frameRateConst);
   // image(drawVecs(flowField), 0, 0);
   
@@ -12,7 +25,6 @@
     ps.addParticleAround(0, 5);
   ((ParticleSystemF) ps).run(flowField);
 */
-
 PVector[][] flowField(float w, float h, float factor, float seed) {
   int rows = ceil(height/h);
   int cols = ceil(width/w);
