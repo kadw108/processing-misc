@@ -4,8 +4,8 @@
 Generates a vector field - a grid of vectors meant to be applied to
 a ParticleSystemF (vector field system for particles).
 
-w - number of columns in grid
-h - number of rows in grid
+w - distance between columns in pixels
+h - distance between rows in pixels
 factor - how much the vector changes in each successive grid spot
 (smoothness of field, for lack of better word)
 seed - random seed of field; if it doesn't change, field never changes.
@@ -35,8 +35,8 @@ PVector[][] flowField(float w, float h, float factor, float seed) {
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < cols; j++) {
       
-      float xDir = map(noise(i*factor, seed), 0, 1, -1, 1);
-      float yDir = map(noise(j*factor, seed), 0, 1, -1, 1);
+      float xDir = map(noise(i*factor + ((4 + i) * 3), seed), 0, 1, -1, 1);
+      float yDir = map(noise(j*factor + ((j - 2) * 10), seed), 0, 1, -1, 1);
       grid[i][j] = new PVector(xDir, yDir).setMag(vecLength);
       
       /*
@@ -95,6 +95,11 @@ class ParticleSystemF extends ParticleSystem {
     // apply force
     // p.acceleration.add(force);
     p.velocity.add(force);
+
+    float maxSpeed = 3;
+    if (p.velocity.mag() > maxSpeed) {
+      p.velocity = p.velocity.normalize().mult(maxSpeed);
+    }
   }
 
   void run(PVector[][] flowField) {

@@ -206,6 +206,18 @@ PImage getFrameBounceLast(PImage[] array, int repeats, int fC) {
   return array[fC];
 }
 
+/* Get frame from [array] corresponding to frameCount (fC), but repeat last [repeats] frames infinitely (linear/forward from beginning to end). */
+PImage getFrameLoopLast(PImage[] array, int repeats, int fC) {
+  if (fC > array.length - 1) {
+    // create new array with last [repeats] elements of array
+    PImage[] loopArray = new PImage[repeats];
+    System.arraycopy(array, array.length - repeats, loopArray, 0, repeats);
+    return getFrame(loopArray, 0, fC - array.length);
+  }  
+  
+  return array[fC];
+}
+
 /* Get frame from [array] corresponding to frameCount (fC), but repeat first [repeats] frames infinitely. */
 PImage getFrameDupeFirst(PImage[] array, int repeats, int fC) {
   int whichFrame = 0;

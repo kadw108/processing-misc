@@ -459,7 +459,7 @@ int npoints, int circleSpace, int circleMissing) {
  */
 void rotateCircleDots(PGraphics pg, float x, float y, float radDot, float radX, float radY, int npoints, float deg) {
   pg.pushMatrix();
-  pg.translate(origin.x + x, origin.y + y);
+  pg.translate(x, y);
   pg.rotate(radians(deg));
   circleDots(pg, 0, 0, radDot, radX, radY, npoints);
   pg.popMatrix();
@@ -615,26 +615,33 @@ void ellipseRect(float x, float y, float innerRad, float diff, float rectW, int 
 }
 
 // Ray circle with IMAGES instead of lines as rays (diff = height)
-// ellipseImage(getFrame(karma, 0, (1/(float)20)), origin.x, origin.y, 300, 20, 20, 10, frameCount);
-void ellipseImage(PGraphics pg, PImage img, float x, float y, float innerRad, float diff, float rectW, int npoints, float shiftDeg, boolean flipImageVertically) {
+// e.g. ellipseImage(main, karma[9], origin.x, origin.y, circleRad2 + percentPix(10), percentPix(4), percentPix(4), 30, frameCountVar, frameCountVar * 5);
+void ellipseImage(PGraphics pg, PImage img, float x, float y, float radius, float img_height, float img_width, int npoints, float shiftDeg, float img_rotation_degrees) {
   float angle = TWO_PI / npoints;
   float shift = radians(shiftDeg);
 
-  if (flipImageVertically)  {
-    innerRad *= -1;
-  }
+  for (float a = shift; a < shift + TWO_PI; a += angle) {
+    float sx = x + cos(a) * radius;
+    float sy = y + sin(a) * radius;
 
-  for (float a = 0; a < TWO_PI; a += angle) {
     pg.pushMatrix();
-    pg.translate(x, y);
-    pg.rotate(a + shift);
-
-    pg.image(img, 0, innerRad, rectW, diff);
+    pg.translate(sx, sy);
+    pg.rotate(radians(img_rotation_degrees));
+    pg.image(img, 0, 0, img_width, img_height);
     pg.popMatrix();
   }
 }
+// kept for compatability
+void ellipseImage(PGraphics pg, PImage img, float x, float y, float innerRad, float diff, float rectW, int npoints, float shiftDeg, boolean flipImageVertically) {
+  float flipAngle = 0;
+  if (flipImageVertically) {
+    flipAngle = 180;
+  }
+
+  ellipseImage(pg, img, x, y, innerRad, diff, rectW, npoints, shiftDeg, flipAngle);
+}
 void ellipseImage(PImage img, float x, float y, float innerRad, float diff, float rectW, int npoints, float shiftDeg) {
-  ellipseImage(g, img, x, y, innerRad, diff, rectW, npoints, shiftDeg, false);
+  ellipseImage(g, img, x, y, innerRad, diff, rectW, npoints, shiftDeg, 0);
 }
 
 // Like ellipseImage, but selects multiple images from the array to use at once

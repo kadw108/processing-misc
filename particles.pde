@@ -1,5 +1,7 @@
 // particles
 
+// whether position [pos] is outside the screen bounds,
+// with an extra [radius] pixels around them
 boolean exceedsRadius(float[] pos, float radius) {
   if (pos[0] > width+radius || pos[0] < 0 - radius ||
       pos[1] > height+radius || pos[1] < 0 - radius) {
@@ -7,49 +9,6 @@ boolean exceedsRadius(float[] pos, float radius) {
       return true;
   }
   return false;
-}
-
-class BaseParticle {
-  PVector position;
-  PVector velocity;
-  PVector acceleration;
-  float lifespan;
-  float size;
-
-  BaseParticle(PVector l) {
-    velocity = new PVector(random(1), random(1));
-    // velocity = new PVector(0, 0);
-    acceleration = new PVector(0, 0);
-    position = l.copy();
-    lifespan = 255.0;
-    size = 5;
-  }
-
-  void run() {
-    update();
-    display();
-  }
-
-  // Method to update position
-  void update() {
-    velocity.add(acceleration);
-    position.add(velocity);
-    lifespan -= 0.5;
-  }
-
-  // Method to display
-  void display() {
-    circle(position.x, position.y, size);
-  }
-
-  // Is the particle still useful?
-  boolean isDead() {
-    if (lifespan < 0.0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 }
 
 // A class to describe a group of BaseParticles
@@ -96,23 +55,33 @@ class ParticleSystem {
     }
   }
   
-  void addActualParticle(int whichParticle, PVector loc) {
+  BaseParticle addActualParticle(int whichParticle, PVector loc) {
+    BaseParticle particle;
+
     switch(whichParticle) {
       case 1:
-        particles.add(new Particle(loc));
+        particle = new Particle(loc);
         break;
-        
+
       case 2:
-        particles.add(new Particle2(loc));
+        particle = new Particle2(loc);
         break;
-        
+
       case 3:
-        particles.add(new PersistLine(loc));
+        particle = new PersistLine(loc);
         break;
-        
+
+      case 4:
+        particle = new ParticleWithPGraphics(loc);
+        break;
+
       default:
-        particles.add(new BaseParticle(loc));
+        particle = new BaseParticle(loc);
+        break;
     }
+
+    particles.add(particle);
+    return particle;
   }
 
   void run() {
@@ -122,6 +91,48 @@ class ParticleSystem {
       if (p.isDead()) {
         particles.remove(i);
       }
+    }
+  }
+}
+
+class BaseParticle {
+  PVector position;
+  PVector velocity;
+  PVector acceleration;
+  float lifespan;
+  float size;
+
+  BaseParticle(PVector l) {
+    velocity = new PVector(0, 0);
+    acceleration = new PVector(0, 0);
+    position = l.copy();
+    lifespan = 255.0;
+    size = 5;
+  }
+
+  void run() {
+    update();
+    display();
+  }
+
+  // Method to update position
+  void update() {
+    velocity.add(acceleration);
+    position.add(velocity);
+    lifespan -= 0.5;
+  }
+
+  // Method to display
+  void display() {
+    circle(position.x, position.y, size);
+  }
+
+  // Is the particle still useful?
+  boolean isDead() {
+    if (lifespan < 0.0) {
+      return true;
+    } else {
+      return false;
     }
   }
 }
@@ -207,5 +218,28 @@ class PersistLine extends BaseParticle {
     endShape();
     
     updatePoints();
+  }
+}
+
+/* ---------------- particle with custom PGraphics ------------------ */
+class ParticleWithPGraphics extends BaseParticle {
+  ParticleWithPGraphics(PVector l) {
+    super(l);
+    acceleration = new PVector(0, 0);
+    velocity = new PVector(0, 0);
+  }
+
+  // Method to display
+  void display() {
+    if (
+      (position.x >= 192 && position.x < 2112) && (position.y >= 108 && position.y < 1188) &&
+      (!tracker[floor(position.x - 192)][floor(position.y - 108)])
+    ) {
+      main.noStroke();
+      main.fill(karmaField.get(floor(position.x - 192), floor(position.y - 108)));
+      main.circle(position.x, position.y, 1.5);
+
+      tracker[floor(position.x - 192)][floor(position.y - 108)] = true;
+    }
   }
 }
