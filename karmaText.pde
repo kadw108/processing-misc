@@ -1,7 +1,7 @@
 // karmaText
 // Inspired by Aleph 2 (Max Cooper and Martin Krzywinski) - https://www.youtube.com/watch?v=tNYfqklRehM
 
-int textWidth = 30;
+int textWidth = 60;
 
 class KarmaChar {
   int level;
@@ -166,7 +166,7 @@ PGraphics createTextScreen(KarmaChar[][] ka, int w, int h, color bg_color) {
 
 /* EDIT A SINGLE ARRAY */
 
-KarmaChar[][] changeColor(KarmaChar[][] ka, color c) {
+KarmaChar[][] kaChangeColor(KarmaChar[][] ka, color c) {
     for (int row = 0; row < ka.length; row++) {
     for (int col = 0; col < ka[0].length; col++) {
       if (ka[row][col] != null) {
@@ -177,7 +177,7 @@ KarmaChar[][] changeColor(KarmaChar[][] ka, color c) {
   return ka;
 }
 
-KarmaChar[][] changeLevel(KarmaChar[][] ka, int num) {
+KarmaChar[][] kaChangeLevel(KarmaChar[][] ka, int num) {
     if (num < 0 || num > 9) {
       return ka;
     }
@@ -233,7 +233,10 @@ KarmaChar[][] kaColorShift(KarmaChar[][] ka, float randomSeed) {
 }
 
 /*
-* Makes random symbols flicker.
+* Makes random symbols flicker in color
+* or become null, if color is (0, 0, 0, 0).
+*
+* limit = noise threshold for symbol to flicker; higher = more flicker
 */
 KarmaChar[][] kaFlicker(KarmaChar[][] ka, float randomSeed, float limit, color c) {
   for (int row = 0; row < ka.length; row++) {
@@ -252,6 +255,27 @@ KarmaChar[][] kaFlicker(KarmaChar[][] ka, float randomSeed, float limit, color c
 }
 KarmaChar[][] kaFlicker(KarmaChar[][] ka, float randomSeed) {
   return kaFlicker(ka, randomSeed, 0.5, #000000);
+}
+
+/*
+* Makes random symbols flicker in karma level.
+*
+* limit = noise threshold for symbol to flicker; higher = more flicker
+*/
+KarmaChar[][] kaFlickerKarma(KarmaChar[][] ka, float randomSeed, float limit) {
+  for (int row = 0; row < ka.length; row++) {
+    for (int col = 0; col < ka[0].length; col++) {
+      if (noise(row, col, randomSeed) < limit && ka[row][col] != null) {
+        int oldLevel = ka[row][col].level;
+        int newLevel = floor((noise(randomSeed + 10, row, col) * 31) / 3.0);
+        if (newLevel == oldLevel) {
+          newLevel = (oldLevel + 2) % 10;
+        }
+        ka[row][col].level = newLevel;
+      }
+    }
+  }
+  return ka;
 }
 
 /*
