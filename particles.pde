@@ -231,15 +231,8 @@ class ParticleWithPGraphics extends BaseParticle {
 
   // Method to display
   void display() {
-    if (
-      (position.x >= 192 && position.x < 2112) && (position.y >= 108 && position.y < 1188) &&
-      (!tracker[floor(position.x - 192)][floor(position.y - 108)])
-    ) {
       main.noStroke();
-      main.fill(karmaField.get(floor(position.x - 192), floor(position.y - 108)));
+      // main.fill(karmaField.get(position.x, position.y));
       main.circle(position.x, position.y, 1.5);
-
-      tracker[floor(position.x - 192)][floor(position.y - 108)] = true;
-    }
   }
 }
