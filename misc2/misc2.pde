@@ -21,15 +21,10 @@ PGraphics main;
 
 KarmaChar[][] karmaArray;
 
-import micycle.uniformnoise.UniformNoise;
-UniformNoise uniformNoise = new UniformNoise();
-
 Flock flock;
 
-PImage[] pink;
-
 void setup(){
-  size(400, 400); // Note that P3D can interfere with overlapping of 2D shapes!!!
+  size(1357, 1150); // Note that P3D can interfere with overlapping of 2D shapes!!!
   
   xCircle = loadImage("../0rw_data/xCircle3.png");
   bg = loadImage("../0rw_data/sky.jpg");
@@ -43,8 +38,6 @@ void setup(){
   
   ps = new ParticleSystemF(new PVector(origin.x, origin.y));
    
-  uniformNoise = new UniformNoise();
-
   // For flocking
   flock = new Flock();
   // Add an initial set of boids into the system
@@ -52,7 +45,6 @@ void setup(){
     flock.addFlockParticle(new FlockParticle(width/2,height/2));
   }
   
-  pink = loadRange("Untitled-Artwork-", 1, 4, ".png");
   frameRate(frameRateConst);
 }
 
@@ -65,12 +57,10 @@ void draw(){
   int fC3 = (int) ((4 * frameCount) / frameRateConst);
 
   background(#000000);
-
-  if (true) {
-    // save("save/"+String.format("%04d", frameCount)+".png");
-    main.save("save/"+frameCount+".png");
-  }
-  // print(seconds, frameCount, "\n");
+  
+  karmaPixelSequenceFromImage("../data/temp.jpg");
+  
+  print("Seconds:", seconds, "| Framecount:", frameCount, "\n");
 }
 
 /* ------------------------------- DYNAMIC LINES -------------------------------- */
@@ -337,7 +327,7 @@ void waveShapeStill(PGraphics pg, float x0, float y0, float radius1, float radiu
 
 // from Fall
 PGraphics xCircle(int rad, float lineWidth, color c, boolean filter) {
-  int w = rad*2 + 100;
+  int w = ceil(rad*2 + max(100, lineWidth));
   
   PGraphics pg = createGraphics(w, w);
   PVector origin = new PVector(w/2, w/2);
@@ -353,9 +343,10 @@ PGraphics xCircle(int rad, float lineWidth, color c, boolean filter) {
   pg.stroke(c);
  
   pg.ellipse(origin.x, origin.y, rad*2, rad*2);
-  
-  pg.line(origin.x + rad * cos(QUARTER_PI), origin.y + rad * sin(QUARTER_PI), origin.x + rad * cos(PI + QUARTER_PI), origin.y + rad * sin(PI + QUARTER_PI));
-  pg.line(origin.x + rad * cos(HALF_PI + QUARTER_PI), origin.y + rad * sin(HALF_PI + QUARTER_PI), origin.x + rad * cos(-QUARTER_PI), origin.y + rad * sin(-QUARTER_PI));
+
+  float rad_x = rad - lineWidth/2.0; 
+  pg.line(origin.x + rad_x * cos(QUARTER_PI), origin.y + rad_x * sin(QUARTER_PI), origin.x + rad_x * cos(PI + QUARTER_PI), origin.y + rad_x * sin(PI + QUARTER_PI));
+  pg.line(origin.x + rad_x * cos(HALF_PI + QUARTER_PI), origin.y + rad_x * sin(HALF_PI + QUARTER_PI), origin.x + rad_x * cos(-QUARTER_PI), origin.y + rad_x * sin(-QUARTER_PI));
   
   if (filter) {
     pg.filter(BLUR, 6);

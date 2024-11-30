@@ -94,9 +94,6 @@ fill(color(0, 0, 0, 100));
 // int c = color(60, 0, 255);
 // void growCircles(PGraphics pg, int num, float maxSize, color stroke, color fill)
 growCircles(g, 35, 20, c, #000000);
-
-image(getFrameBounce(pink, 0, fC3), 0, 0);
-image(getFrameBounce(pink, 0, fC3), 0, 0);
 */
 
 /* 

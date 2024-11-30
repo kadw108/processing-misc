@@ -1,7 +1,7 @@
 // karmaText
 // Inspired by Aleph 2 (Max Cooper and Martin Krzywinski) - https://www.youtube.com/watch?v=tNYfqklRehM
 
-int textWidth = 60;
+int textWidth = 25;
 
 class KarmaChar {
   int level;
@@ -97,7 +97,6 @@ KarmaChar[][] genKarmaArray(PImage main, float noiseSeed, color maskColor) {
         ka[row][col] = null;
       }
       else {
-        // int karmaLevel = (int) (map(uniformNoise.uniformNoise((float) sampleX, (float) sampleY, noiseSeed), 0, 1, 0, 10));
         int karmaLevel = floor((noise(noiseSeed + 10, sampleX, sampleY) * 31) / 3.0);
         ka[row][col] = new KarmaChar(karmaLevel, pixelColor);
       }
@@ -507,4 +506,37 @@ KarmaChar[][] kaMask(KarmaChar[][] mask, KarmaChar[][] base) {
     }
   }
   return base;
+}
+
+/*
+ * Given the path to an image, creates 10 karma pixel images based on the starting image.
+ * They are saved as temp001 - temp010.
+ * 
+ * If you want to see the full images as they are rendered, call size() in the main 
+ * Processing function with the size of the image you want to use.
+ * e.g. if imagePath is the path of a 500x500 image, call size(500, 500) in setup.
+ *
+ * To change the size of each karma symbol, change textWidth defined at the top
+ * of this file.
+ */
+void karmaPixelSequenceFromImage(String imagePath) {
+  PImage temp = loadImage(imagePath);
+
+  // KarmaChar[][] genLevelArray(PGraphics main, int level) {
+  KarmaChar[][] levelArray = genKarmaArray(temp, frameCount + 20);
+
+  // PGraphics createTextScreen(KarmaChar[][] ka, int w, int h) {
+  PGraphics textScreen = createTextScreen(levelArray, temp.width, temp.height, #000000);
+
+  PGraphics main = createGraphics(temp.width, temp.height);
+  main.beginDraw();
+  main.background(#000000);
+  main.image(textScreen, 0, 0);
+  main.endDraw();
+  
+  image(main, 0, 0);
+
+  if (frameCount < 11) {
+    main.save("../save/" + "temp" + String.format("%03d", frameCount)+".png");
+  }
 }
