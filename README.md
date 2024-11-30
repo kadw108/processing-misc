@@ -6,4 +6,4 @@ The main folder is `misc2`, and the main file there is `misc2/misc2.pde`. `misc2
 
 The current version of `misc2/misc2.pde`, when run, turns `data/temp.jpg` into a series of pixelated karma images as a demonstration of the code in `misc2/karmaText.pde`.
 
-Owing to the large number of files in the `misc2` folder, which can be cumbersome in the official Processing editor, I recommend editing with Visual Studio Code.
+Owing to the large number of files in the `misc2` folder, which can be cumbersome in the official Processing editor, you may find it easier to use a different text editor and run the Processing sketch from the command line instead.
